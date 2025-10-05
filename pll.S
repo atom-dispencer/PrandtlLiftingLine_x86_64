@@ -17,6 +17,18 @@ main:
   xor %rax, %rax
   call printf
 
+  # scanf( *64_msgFromUser, 64, stdin )
+  sub $64, %rsp                 # Allocate 64 bytes on stack (stack grows down,
+  lea (%rsp), %rdi              #   but data in the stack grows upwards)
+  mov $64, %rsi
+  mov stdin(%rip), %rdx
+  call fgets
+
+  # printf( *64_msgFromUser )
+  lea (%rsp), %rdi
+  xor %rax, %rax
+  call printf
+  add $64, %rsp                 # Free 64 bytes on stack
 
   # Kill the stack frame
   mov %rbp, %rsp
