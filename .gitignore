@@ -1,0 +1,7 @@
+# Ignore everything except a few files
+*
+
+# Include gitignore, CMake and assembly 
+!.gitignore
+!CMakeLists.txt
+!*.S
