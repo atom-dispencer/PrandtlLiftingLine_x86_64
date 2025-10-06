@@ -1,3 +1,14 @@
+
+  #
+  # My submission for my MMME3080 (Advanced Aerodynamics) module - a program to
+  # ease calculation of Prandtl's Lifting Line Theory.
+  #
+  # Why assembly? Because it was an excuse to learn some assembly, plus someone
+  # last year did this in C++ and thought they were cool. If someone wants to
+  # be even cooler, I would accept defeat to machine-code, BASIC, MUMPS or some
+  # headache-inducing esolang :)
+  #
+
   .section .data
 msg:
   .asciz "mulss testing: %f\n"
