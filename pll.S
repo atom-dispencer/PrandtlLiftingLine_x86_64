@@ -1,6 +1,10 @@
   .section .data
 msg:
-  .asciz "Prandtl says hi!\n"
+  .asciz "mulss testing: %f\n"
+b:
+  .double 500.0
+area:
+  .double 1000.0
 
 .section .text
 .global main
@@ -12,23 +16,16 @@ main:
   push %rbp
   mov %rsp, %rbp
 
-  # printf(msg)
+  movsd b(%rip), %xmm0
+  movsd area(%rip), %xmm1
+  call f_aspect_ratio
+
+  # printf(msg, float)
+  sub $64, %rsp
   lea msg(%rip), %rdi     
-  xor %rax, %rax
+  movsd %xmm0, (%rsp)
   call printf
-
-  # scanf( *64_msgFromUser, 64, stdin )
-  sub $64, %rsp                 # Allocate 64 bytes on stack (stack grows down,
-  lea (%rsp), %rdi              #   but data in the stack grows upwards)
-  mov $64, %rsi
-  mov stdin(%rip), %rdx
-  call fgets
-
-  # printf( *64_msgFromUser )
-  lea (%rsp), %rdi
-  xor %rax, %rax
-  call printf
-  add $64, %rsp                 # Free 64 bytes on stack
+  add $64, %rsp
 
   # Kill the stack frame
   mov %rbp, %rsp
@@ -36,3 +33,22 @@ main:
   # return 0
   mov $0, %eax
   ret
+
+  #
+  # Params:
+  #   xxm0: float b
+  #   xmm1: float area
+  #
+  # Returns:
+  #   xmm0: float aspect_ratio
+  # 
+f_aspect_ratio:
+  push %rbp
+  mov %rsp, %rbp
+
+  mulsd %xmm0, %xmm0            # b * b
+  divsd %xmm1, %xmm0            # ... / area 
+
+  pop %rbp
+  ret
+
