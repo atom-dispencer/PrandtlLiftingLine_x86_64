@@ -17,6 +17,11 @@ b:
 area:
   .double 1000.0
 
+msg_read:
+  .asciz "Input a double: "
+fmt_read:
+  .asciz "%f"
+
 .section .text
 .global main
 
@@ -38,11 +43,54 @@ main:
   call printf
   add $64, %rsp
 
+  lea msg_read(%rip), %rdi
+  call f_read_double
+
   # Kill the stack frame
   mov %rbp, %rsp
   pop %rbp
   # return 0
   mov $0, %eax
+  ret
+
+  #
+  # Params:
+  #   rdi: char* prompt
+  # Returns:
+  #   eax: success ? 0 : 1
+  #   xmm0: user input value
+  #
+  # NOTE: I forgot if this works lol
+f_read_double:
+  push %rbp
+  mov %rsp, %rbp
+  sub $16, %rsp
+
+  # printf(prompt)
+  # rdi is already set
+  xor %rax, %rax
+  call printf
+
+  # eax = scanf ( format, current_stack_pointer )
+  lea fmt_read(%rip), %rdi
+  lea (%rsp), %rsi
+  call scanf
+
+  # If read exactly 1 value, success, otherwise fail
+  cmp $1, %eax
+  jne _f_read_double_fail
+_f_read_double_succ:
+
+  movsd (%rsp), %xmm0
+
+  mov $0, %eax
+  jmp _f_read_double_end
+_f_read_double_fail:
+  mov $1, %eax
+_f_read_double_end:
+
+  add $16, %rsp
+  pop %rbp 
   ret
 
   #
