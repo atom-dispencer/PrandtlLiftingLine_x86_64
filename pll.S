@@ -50,9 +50,13 @@
 msg:
   .asciz "mulss testing: %f\n"
 b:
-  .double 500.0
+  .double 35223
 area:
   .double 1000.0
+chordR:
+  .double 235666
+chordT:
+  .double 233
 
 msg_read:
   .asciz "Input a double: "
@@ -78,6 +82,11 @@ main:
   movsd area(%rip), %xmm1
   call f_aspect_ratio
 
+  movsd b(%rip), %xmm0
+  movsd chordR(%rip), %xmm1
+  movsd chordT(%rip), %xmm2
+  call f_wing_area
+
   # printf(msg, float)
   sub $64, %rsp
   lea msg(%rip), %rdi     
@@ -98,9 +107,13 @@ main:
   #
   # Params:
   #   rdi: char* prompt
+  #
   # Returns:
   #   eax: success ? 0 : 1
   #   xmm0: user input value
+  #
+  # Touches:
+  #   ???
   #
   # NOTE: I forgot if this works lol
 f_read_double:
@@ -142,14 +155,39 @@ _f_read_double_end:
   #
   # Returns:
   #   xmm0: float aspect_ratio
+  #
+  # Touches:
+  #   N/A
   # 
 f_aspect_ratio:
-  push %rbp
-  mov %rsp, %rbp
-
   mulsd %xmm0, %xmm0            # b * b
   divsd %xmm1, %xmm0            # ... / area 
-
-  pop %rbp
   ret
 
+  #
+  # Params
+  #   xmm0: wingspan (m)
+  #   xmm1: root chord (m)
+  #   xmm2: tip chord (m)
+  #
+  # Returns:
+  #   xmm0: wing area (m2)
+  #
+  # Touches:
+  #   rax
+  #   xmm6
+  #
+  # Checked:
+  #   YES - Checked against a Python reimplementation of the Julia
+  #
+f_wing_area:
+  mov $2, %rax
+  cvtsi2sd %rax, %xmm6          # Generate a floating-point $2
+
+  movsd %xmm1, %xmm7            # xmm7 = root
+  addsd %xmm2, %xmm7            # xmm7 = root + tip
+  mulsd %xmm0, %xmm7            # xmm7 = span * (root + tip)
+  divsd %xmm6, %xmm7            # xmm7 = 0.5 * span  (root + tip)
+
+  movsd %xmm7, %xmm0
+  ret
