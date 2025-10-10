@@ -17,7 +17,7 @@
   #
   # ~~~ Why Assembly? ~~~
   #
-  # Because it was an excuse to learn some assembly, plus someone last year 
+  # Because it seemed like a fun idea at the time... plus someone last year 
   # thought they were cool for doing in in C++ ;) ... This program was
   # hand-written in x86_64 AT&T-style (GAS) assembly, using neovim btw. 
   # Code-generation tools were not used, but GodBolt.org was occasionally 
