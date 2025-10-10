@@ -45,7 +45,8 @@
   # allows the user to input coefficients.
   #
 
-  .section .data
+.section .data
+
 msg:
   .asciz "mulss testing: %f\n"
 b:
@@ -58,10 +59,15 @@ msg_read:
 fmt_read:
   .asciz "%f"
 
+  #
+  # Program/Executable
+  #
+
 .section .text
 .global main
 
 .extern printf
+.extern scanf
 
 main:
   # Set up a new GCC-style stack frame
