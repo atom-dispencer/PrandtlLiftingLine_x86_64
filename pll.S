@@ -1,12 +1,48 @@
 
   #
   # My submission for my MMME3080 (Advanced Aerodynamics) module - a program to
-  # ease calculation of Prandtl's Lifting Line Theory.
+  # ease calculation of Prandtl's Lifting Line Theory. This program has minimal
+  # dependencies, requiring only to be linked with libc and for gnuplot to be
+  # installed and runnable on the device.
   #
-  # Why assembly? Because it was an excuse to learn some assembly, plus someone
-  # last year did this in C++ and thought they were cool. If someone wants to
-  # be even cooler, I would accept defeat to machine-code, BASIC, MUMPS or some
-  # headache-inducing esolang :)
+  # ~~~ Building ~~~
+  #
+  # To build, you can either use CMake:
+  #   cd PrandtlLiftingLine_x86_64
+  #   cmake -S . -b build
+  #   cmake --build build --clean-first
+  # ... or you can build it directly with GCC:
+  #   cd PrandtlLiftingLine_x86_64
+  #   gcc -no-pie pll.S -o pll
+  #
+  # ~~~ Why Assembly? ~~~
+  #
+  # Because it was an excuse to learn some assembly, plus someone last year 
+  # thought they were cool for doing in in C++ ;) ... This program was
+  # hand-written in x86_64 AT&T-style (GAS) assembly, using neovim btw. 
+  # Code-generation tools were not used, but GodBolt.org was occasionally 
+  # referenced for instruction or register descriptions.
+  # 
+  # If someone wants to be even cooler, I would accept defeat to machine-code, 
+  # BASIC, MUMPS or some headache-inducing esolang :)
+  #
+  # ~~~ Basic Behaviour ~~~
+  #
+  # This program asks the user for a number of parameters to define their wing
+  # (limited to linear functions of AoA and chord, see below), then formulates
+  # and solves the linear system, and displays the result to the user using
+  # gnuplot.
+  #
+  # ~~~ Caveats ~~~
+  #
+  # The Julia implementation which this is based on (github:mberto79/LLT) uses
+  # some neat Julia features, like higher order functions, which could be done
+  # in assembly but would serve little purpose. After all, if a higher-order
+  # function is used so that the user can simply put their own function in, it
+  # would be self-defeating in my opinion to make them write it in x86 and
+  # recompile the program. Hence, this program does not accept arbitrary 
+  # functions for chord or AoA. Instead, it assumes linear functions and 
+  # allows the user to input coefficients.
   #
 
   .section .data
